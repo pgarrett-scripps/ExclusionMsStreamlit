@@ -1,1 +1,3 @@
-EXCLUSION_API_IP = 'http://127.0.0.1:8000'
+import os
+
+EXCLUSION_API_IP = f'http://{os.environ["EXCLUSION_MS_API_IP"]}'
