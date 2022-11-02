@@ -1,10 +1,11 @@
-import json
-
 import streamlit as st
-import requests
 
-from utils import convert_int, convert_float, convert_str, make_interval_query
-from constants import EXCLUSION_API_IP
+from exclusionms.apihandler import add_exclusion_interval_query, get_exclusion_interval_query, \
+    delete_exclusion_interval_query
+from exclusionms.components import ExclusionInterval
+from exclusionms.exceptions import UnexpectedStatusCodeException
+from utils import convert_int, convert_float, convert_str
+from constants import EXCLUSION_MS_API_IP
 
 
 st.header('Exclusion Interval')
@@ -29,30 +30,38 @@ c1,c2,c3 = st.columns(3)
 response = None
 interval_query = None
 if c1.button('Add'):
-    query = make_interval_query(interval_id, charge, min_mass, max_mass, min_rt, max_rt, min_ook0, max_ook0, min_intensity, max_intensity)
-    interval_query = f'{EXCLUSION_API_IP}/exclusionlist/interval{query}'
-    response = requests.post(interval_query)
-
-if c2.button('Remove'):
-    query = make_interval_query(interval_id, charge, min_mass, max_mass, min_rt, max_rt, min_ook0, max_ook0, min_intensity, max_intensity)
-    interval_query = f'{EXCLUSION_API_IP}/exclusionlist/interval{query}'
-    response = requests.delete(interval_query)
-
-if c3.button('Query'):
-    query = make_interval_query(interval_id, charge, min_mass, max_mass, min_rt, max_rt, min_ook0, max_ook0, min_intensity, max_intensity)
-    interval_query = f'{EXCLUSION_API_IP}/exclusionlist/interval{query}'
-    response = requests.get(interval_query)
-
-if response:
-    st.subheader('Query sting')
-    st.write(interval_query)
-
-    st.subheader('Status Code')
-    st.write(response.status_code)
-
-    st.subheader('Content')
+    exclusion_interval = ExclusionInterval(id=interval_id, charge=charge, min_mass=min_mass, max_mass=max_mass,
+                                           min_rt=min_rt, max_rt=max_rt, min_ook0=min_ook0, max_ook0=max_ook0,
+                                           min_intensity=min_intensity, max_intensity=max_intensity)
 
     try:
-        st.json(json.loads((response.content)))
-    except json.decoder.JSONDecodeError:
-        pass
+        add_exclusion_interval_query(exclusion_api_ip=EXCLUSION_MS_API_IP,exclusion_interval=exclusion_interval)
+    except UnexpectedStatusCodeException as ex:
+        st.error(f'Problem Adding Interval: {ex}')
+
+
+if c2.button('Remove'):
+
+    exclusion_interval = ExclusionInterval(id=interval_id, charge=charge, min_mass=min_mass, max_mass=max_mass,
+                                           min_rt=min_rt, max_rt=max_rt, min_ook0=min_ook0, max_ook0=max_ook0,
+                                           min_intensity=min_intensity, max_intensity=max_intensity)
+
+    try:
+        delete_exclusion_interval_query(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
+    except UnexpectedStatusCodeException as ex:
+        st.error(f'Problem Adding Interval: {ex}')
+
+
+if c3.button('Query'):
+
+    exclusion_interval = ExclusionInterval(id=interval_id, charge=charge, min_mass=min_mass, max_mass=max_mass,
+                                           min_rt=min_rt, max_rt=max_rt, min_ook0=min_ook0, max_ook0=max_ook0,
+                                           min_intensity=min_intensity, max_intensity=max_intensity)
+
+    try:
+        results = get_exclusion_interval_query(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
+    except UnexpectedStatusCodeException as ex:
+        st.error(f'Problem Adding Interval: {ex}')
+
+    st.write(results)
+

@@ -1,4 +1,3 @@
-import random
 import time
 
 import pandas as pd
@@ -6,10 +5,10 @@ import streamlit as st
 
 from exclusionms.apihandler import add_exclusion_interval_query
 from exclusionms.components import ExclusionInterval, DynamicExclusionTolerance, ExclusionPoint
-from constants import EXCLUSION_API_IP
+from constants import EXCLUSION_MS_API_IP
 st.header('Populate Active Exclusion List with Random intervals')
 
-num_intervals = st.number_input(label='Random Intervals', value=100_000)
+num_intervals = st.number_input(label='Random Intervals', value=100_000, min_value=100)
 
 st.subheader('Random number min/max bounds')
 min_charge, max_charge = st.slider(label='min/max charge', min_value=0, max_value=10, value=(1, 5))
@@ -42,7 +41,7 @@ if st.button('Add'):
                                                                 min_ook0=min_ook0, max_ook0=max_ook0,
                                                                 min_intensity=min_intensity, max_intensity=max_intensity)
         random_interval = tolerance.construct_interval(interval_id='testing', exclusion_point=random_exclusion_point)
-        add_exclusion_interval_query(exclusion_api_ip=EXCLUSION_API_IP, exclusion_interval=random_interval)
+        add_exclusion_interval_query(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=random_interval)
 
         if i % int(num_intervals/100) == 0:
             sizes.append(i)

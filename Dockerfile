@@ -1,6 +1,6 @@
 FROM python:3.10.7
 
-ENV EXCLUSION_API_IP='localhost:8000'
+ENV EXCLUSION_MS_API_IP='localhost:8000'
 
 WORKDIR /usr/src/app
 
