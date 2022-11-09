@@ -58,10 +58,7 @@ if c3.button('Query'):
                                            min_rt=min_rt, max_rt=max_rt, min_ook0=min_ook0, max_ook0=max_ook0,
                                            min_intensity=min_intensity, max_intensity=max_intensity)
 
-    try:
-        results = get_exclusion_interval_query(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
-    except UnexpectedStatusCodeException as ex:
-        st.error(f'Problem Adding Interval: {ex}')
-
-    st.write(results)
+    results = get_exclusion_interval_query(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
+    if results:
+        st.write(results)
 
