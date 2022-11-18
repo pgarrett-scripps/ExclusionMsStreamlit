@@ -2,7 +2,7 @@ import time
 import traceback
 
 import streamlit as st
-from exclusionms.apihandler import add_exclusion_interval_query
+from exclusionms.apihandler import add_exclusion_interval
 from exclusionms.components import ExclusionInterval
 from exclusionms.exceptions import UnexpectedStatusCodeException
 
@@ -26,7 +26,7 @@ if st.button('Add Intervals'):
     for i, interval in enumerate(exclusion_intervals):
 
         try:
-            add_exclusion_interval_query(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=interval)
+            add_exclusion_interval(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=interval)
         except UnexpectedStatusCodeException as e:
             tb = traceback.format_exc()
             st.error(e)
