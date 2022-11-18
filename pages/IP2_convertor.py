@@ -1,6 +1,6 @@
 import streamlit as st
 from exclusionms.apihandler import add_exclusion_interval
-from senpy.dtaselectfilter import from_dta_select_filter
+from serenipy.dtaselectfilter import from_dta_select_filter
 from exclusionms.components import ExclusionPoint, DynamicExclusionTolerance
 
 from constants import EXCLUSION_MS_API_IP
