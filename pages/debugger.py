@@ -56,7 +56,7 @@ def make_random_point(min_charge, max_charge, min_mass, max_mass, min_rt, max_rt
     return ExclusionPoint(charge=charge, mass=mass, rt=rt, ook0=ook0, intensity=intensity)
 
 
-if add_btn.button('Add'):
+if add_btn.button('Add Interval'):
 
     tolerance = DynamicExclusionTolerance.from_strings(exact_charge=use_exact_charge, mass_tolerance=mass_tolerance,
                                                        rt_tolerance=rt_tolerance, ook0_tolerance=ook0_tolerance,
@@ -85,7 +85,7 @@ if add_btn.button('Add'):
 
     st.metric(label='Time', value=time.time()-start_time)
 
-if query_btn.button('Query'):
+if query_btn.button('Query Points'):
 
     exclusion_points = []
     for i in range(num_intervals):

@@ -46,10 +46,10 @@ if c2.button('Remove'):
                                            min_rt=min_rt, max_rt=max_rt, min_ook0=min_ook0, max_ook0=max_ook0,
                                            min_intensity=min_intensity, max_intensity=max_intensity)
 
-    try:
-        delete_exclusion_interval(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
-    except UnexpectedStatusCodeException as ex:
-        st.error(f'Problem Adding Interval: {ex}')
+    intervals = delete_exclusion_interval(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
+    interval_jsons = [interval.dict() for interval in intervals]
+    if interval_jsons:
+        st.write(interval_jsons)
 
 
 if c3.button('Query'):
@@ -58,7 +58,8 @@ if c3.button('Query'):
                                            min_rt=min_rt, max_rt=max_rt, min_ook0=min_ook0, max_ook0=max_ook0,
                                            min_intensity=min_intensity, max_intensity=max_intensity)
 
-    results = get_exclusion_interval(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
-    if results:
-        st.write(results)
+    intervals = get_exclusion_interval(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=exclusion_interval)
+    interval_jsons = [interval.dict() for interval in intervals]
+    if interval_jsons:
+        st.write(interval_jsons)
 
