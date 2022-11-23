@@ -8,7 +8,6 @@ from constants import EXCLUSION_MS_API_IP
 
 saved_files = json.loads(requests.get(f'{EXCLUSION_MS_API_IP}/exclusionms').content)['files']
 
-
 st.subheader('Active Exclusion List')
 
 col1, col2 = st.columns(2)
