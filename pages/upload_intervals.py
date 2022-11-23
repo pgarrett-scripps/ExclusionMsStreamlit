@@ -1,6 +1,7 @@
 import time
 import traceback
 
+import exclusionms
 import streamlit as st
 from exclusionms.apihandler import add_exclusion_interval
 from exclusionms.components import ExclusionInterval
@@ -20,23 +21,9 @@ interval_file = st.file_uploader(label='Interval File')
 
 start_time = time.time()
 if st.button('Add Intervals'):
-    bar = st.progress(0)
     interval_lines = interval_file.getvalue().decode("utf-8").split("\n")
-    exclusion_intervals = [ExclusionInterval.from_str(interval_str) for interval_str in interval_lines if interval_str]
-    for i, interval in enumerate(exclusion_intervals):
-
-        try:
-            add_exclusion_interval(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_interval=interval)
-        except UnexpectedStatusCodeException as e:
-            tb = traceback.format_exc()
-            st.error(e)
-            st.error(tb)
-
-        if i % 100 == 0:
-            bar.progress(float(i/len(exclusion_intervals)))
-
-    bar.progress(1.0)
-
+    intervals = [ExclusionInterval.from_str(interval_str) for interval_str in interval_lines if interval_str]
+    exclusionms.apihandler.add_exclusion_intervals(exclusion_api_ip=EXCLUSION_MS_API_IP, exclusion_intervals=intervals)
     st.metric(label='Time', value=time.time() - start_time)
 
 
