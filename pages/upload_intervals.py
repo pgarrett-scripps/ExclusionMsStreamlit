@@ -1,11 +1,9 @@
 import time
-import traceback
 
 import exclusionms
 import streamlit as st
 from exclusionms.apihandler import add_exclusion_interval
 from exclusionms.components import ExclusionInterval
-from exclusionms.exceptions import UnexpectedStatusCodeException
 
 from constants import EXCLUSION_MS_API_IP
 
