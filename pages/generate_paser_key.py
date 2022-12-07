@@ -3,6 +3,8 @@ import json
 import streamlit as st
 import uuid
 
+from exclusionms.components import DynamicExclusionTolerance
+
 st.header('Make ExclusionMS Key')
 with st.expander('Help'):
     st.markdown('''
@@ -51,42 +53,22 @@ if dynamic_exclusion:
     ook0_tolerance = st.text_input(label='ook0 Tolerance', value='', help='Represents the ook0 tolerance (in %): ook0 +/- ook0*ook0_tolerance')
     intensity_tolerance = st.text_input(label='Intensity Tolerance', value='', help='Represents the intensity tolerance (in %): intensity +/- intensity*intensity_tolerance')
 
-    exact_charge = 'true' if use_exact_charge else 'false'
-    if mass_tolerance != '' and mass_tolerance.lower() != 'none':
-        try:
-            float(mass_tolerance)
-        except ValueError:
-            st.warning(f'Invalid mass_tolerance tolerance: {mass_tolerance}!')
-            st.stop()
 
-    if rt_tolerance != '' and rt_tolerance.lower() != 'none':
-        try:
-            float(rt_tolerance)
-        except ValueError:
-            st.warning(f'Invalid rt_tolerance tolerance: {rt_tolerance}!')
-            st.stop()
+    tmp_dict = {'exact_charge':use_exact_charge, 'mass':mass_tolerance, 'rt':rt_tolerance, 'ook0':ook0_tolerance, 'intensity':intensity_tolerance}
+    try:
+        tolerance = DynamicExclusionTolerance.from_strings(exact_charge=use_exact_charge, mass_tolerance=mass_tolerance,
+                                                           rt_tolerance=rt_tolerance, ook0_tolerance=ook0_tolerance,
+                                                           intensity_tolerance=intensity_tolerance)
+        print(tolerance)
+    except ValueError as e:
+        st.error(f'Error reading tolerances: {e}')
+        st.stop()
 
-    if ook0_tolerance != '' and ook0_tolerance.lower() != 'none':
-        try:
-            float(ook0_tolerance)
-        except ValueError:
-            st.warning(f'Invalid ook0_tolerance tolerance: {ook0_tolerance}!')
-            st.stop()
-
-    if intensity_tolerance != '' and intensity_tolerance.lower() != 'none':
-        try:
-            float(intensity_tolerance)
-        except ValueError:
-            st.warning(f'Invalid intensity_tolerance tolerance: {intensity_tolerance}!')
-            st.stop()
 
     paser_key['exlist'] = {'exid': exid,
-                           'dynamic_exclusion': 'true',
-                           'exact_charge': exact_charge,
-                           'mass': mass_tolerance,
-                           'rt': rt_tolerance,
-                           'ook0': ook0_tolerance,
-                           'intensity': intensity_tolerance}
+                           'dynamic': 'true',
+                           'tolerance': tolerance.dict()
+                           }
 else:
     paser_key['exlist'] = {'exid': exid, 'dynamic_exclusion': 'false'}
 

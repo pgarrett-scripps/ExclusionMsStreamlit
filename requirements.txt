@@ -4,4 +4,4 @@ pandas==1.5.1
 intervaltree==3.1.0
 matplotlib==3.6.2
 serenipy==0.1.2
-exclusionms==0.0.8
+exclusionms==0.0.9
