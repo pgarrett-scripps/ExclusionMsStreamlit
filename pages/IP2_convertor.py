@@ -8,6 +8,7 @@ from constants import EXCLUSION_MS_API_IP
 st.header('Convert IP2 files to Intervals')
 
 ip2_files = st.file_uploader(label='IP2 File', type='.txt', accept_multiple_files=True)
+x_corr_threshold = st.number_input(label='Xcorr filter', value= 0.0)
 
 # Only used with Add
 st.subheader('Exclusion Interval Tolerance')
@@ -35,6 +36,8 @@ if st.button('Run'):
             num_intervals = sum([len(dta_result.peptide_lines) for dta_result in dta_results])
             for dta_result in dta_results:
                 for peptide_line in dta_result.peptide_lines:
+                    if peptide_line.x_corr < x_corr_threshold:
+                        continue
                     exclusion_point = ExclusionPoint(charge=peptide_line.charge,
                                                      mass=peptide_line.mass_plus_hydrogen - 1.00727647,
                                                      rt=peptide_line.ret_time,
