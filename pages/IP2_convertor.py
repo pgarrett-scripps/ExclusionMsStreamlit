@@ -1,9 +1,8 @@
+import json
+
 import streamlit as st
-from exclusionms.apihandler import add_exclusion_interval, add_exclusion_intervals
 from serenipy.dtaselectfilter import from_dta_select_filter
 from exclusionms.components import ExclusionPoint, DynamicExclusionTolerance
-
-from constants import EXCLUSION_MS_API_IP
 
 st.header('Convert IP2 files to Intervals')
 
@@ -28,9 +27,12 @@ if st.button('Run'):
     for ip2_file in ip2_files:
         ip2_file_content = ip2_file.read().decode('utf-8')
 
-        tolerance = DynamicExclusionTolerance.from_strings(exact_charge=use_exact_charge, mass_tolerance=mass_tolerance,
-                                                           rt_tolerance=rt_tolerance, ook0_tolerance=ook0_tolerance,
-                                                           intensity_tolerance=intensity_tolerance)
+        tolerance = DynamicExclusionTolerance(charge=use_exact_charge,
+                                              mass=float(mass_tolerance) if mass_tolerance else None,
+                                              rt=float(rt_tolerance) if rt_tolerance else None,
+                                              ook0=float(ook0_tolerance) if ook0_tolerance else None,
+                                              intensity=float(intensity_tolerance) if intensity_tolerance else None)
+
         if ip2_file.name.endswith('.txt'):
             version, header, dta_results, info = from_dta_select_filter(ip2_file_content)
             num_intervals = sum([len(dta_result.peptide_lines) for dta_result in dta_results])
@@ -38,6 +40,7 @@ if st.button('Run'):
                 for peptide_line in dta_result.peptide_lines:
                     if peptide_line.x_corr < x_corr_threshold:
                         continue
+
                     exclusion_point = ExclusionPoint(charge=peptide_line.charge,
                                                      mass=peptide_line.mass_plus_hydrogen - 1.00727647,
                                                      rt=peptide_line.ret_time,
@@ -50,7 +53,7 @@ if st.button('Run'):
             st.error(f'File Type Not supported!')
             continue
 
-    file_contents = ''.join([f'{str(interval.dict())}\n' for interval in intervals])
+    file_contents = json.dumps([interval.dict() for interval in intervals])
     st.download_button(label='Download Intervals',
                        data=file_contents,
                        file_name=f'intervals.txt')

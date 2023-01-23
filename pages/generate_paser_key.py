@@ -1,7 +1,5 @@
 import json
-
 import streamlit as st
-import uuid
 
 from exclusionms.components import DynamicExclusionTolerance
 
@@ -35,15 +33,13 @@ dynamic_exclusion = st.checkbox(label='Use Dynamic Exclusion', value=False, help
 if not paser_key:
     st.warning(f'Input Paser Key!')
     st.stop()
-else:
-    print(paser_key)
-    paser_key = json.loads(paser_key)
 
-if not exid:
-    exid = str(uuid.uuid1())
+
+paser_key = json.loads(paser_key)
+exid = exid if exid else None
+paser_key['exclusionms'] = {'exid': exid, 'dynamic': dynamic_exclusion}
 
 if dynamic_exclusion:
-
 
     # Only used with Add
     st.subheader('Exclusion Interval Tolerance')
@@ -53,24 +49,14 @@ if dynamic_exclusion:
     ook0_tolerance = st.text_input(label='ook0 Tolerance', value='', help='Represents the ook0 tolerance (in %): ook0 +/- ook0*ook0_tolerance')
     intensity_tolerance = st.text_input(label='Intensity Tolerance', value='', help='Represents the intensity tolerance (in %): intensity +/- intensity*intensity_tolerance')
 
+    tolerance = DynamicExclusionTolerance(charge=use_exact_charge,
+                                          mass=float(mass_tolerance) if mass_tolerance else None,
+                                          rt=float(rt_tolerance) if rt_tolerance else None,
+                                          ook0=float(ook0_tolerance) if ook0_tolerance else None,
+                                          intensity=float(intensity_tolerance) if intensity_tolerance else None)
 
-    tmp_dict = {'exact_charge':use_exact_charge, 'mass':mass_tolerance, 'rt':rt_tolerance, 'ook0':ook0_tolerance, 'intensity':intensity_tolerance}
-    try:
-        tolerance = DynamicExclusionTolerance.from_strings(exact_charge=use_exact_charge, mass_tolerance=mass_tolerance,
-                                                           rt_tolerance=rt_tolerance, ook0_tolerance=ook0_tolerance,
-                                                           intensity_tolerance=intensity_tolerance)
-        print(tolerance)
-    except ValueError as e:
-        st.error(f'Error reading tolerances: {e}')
-        st.stop()
+    paser_key['exclusionms']['tolerance'] = tolerance.dict()
 
-
-    paser_key['exlist'] = {'exid': exid,
-                           'dynamic': 'true',
-                           'tolerance': tolerance.dict()
-                           }
-else:
-    paser_key['exlist'] = {'exid': exid, 'dynamic_exclusion': 'false'}
 
 st.subheader('ExclusionMS Paser Key:')
 st.write(str(json.dumps(paser_key)))
