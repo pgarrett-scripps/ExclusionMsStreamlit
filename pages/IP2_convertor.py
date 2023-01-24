@@ -50,4 +50,3 @@ if st.button('Run'):
     st.download_button(label='Download Intervals',
                        data=file_contents,
                        file_name=f'intervals.txt')
-
