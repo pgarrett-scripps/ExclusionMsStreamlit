@@ -2,12 +2,12 @@ import random
 import time
 
 import exclusionms.apihandler
-import matplotlib.pyplot as plt
 import streamlit as st
 import exclusionms
-from exclusionms.components import DynamicExclusionTolerance, ExclusionPoint
+from exclusionms.components import ExclusionPoint
 
 from constants import EXCLUSION_MS_API_IP
+from utils import get_tolerance
 
 st.header('Debugger')
 
@@ -50,11 +50,7 @@ with st.expander('Bounds'):
 
 # Only used with Add
 with st.expander('Tolerance'):
-    use_exact_charge = st.checkbox('Use exact charge', value=False)
-    mass_tolerance = st.text_input(label='mass Tolerance', value='50')
-    rt_tolerance = st.text_input(label='rt Tolerance', value='100')
-    ook0_tolerance = st.text_input(label='ook0 Tolerance', value='0.05')
-    intensity_tolerance = st.text_input(label='Intensity Tolerance', value='0.5')
+    tolerance = get_tolerance()
 
 add_btn, query_btn = st.columns(2)
 
@@ -85,12 +81,6 @@ def make_random_point(min_charge, max_charge, min_mass, max_mass, min_rt, max_rt
 
 
 if add_btn.button('Add Intervals'):
-
-    tolerance = DynamicExclusionTolerance(charge=use_exact_charge,
-                                          mass=float(mass_tolerance) if mass_tolerance else None,
-                                          rt=float(rt_tolerance) if rt_tolerance else None,
-                                          ook0=float(ook0_tolerance) if ook0_tolerance else None,
-                                          intensity=float(intensity_tolerance) if intensity_tolerance else None)
 
     times = []
     sizes = []
@@ -136,7 +126,3 @@ if query_btn.button('Query Points'):
 
     with st.expander('Results'):
         st.write(exclusion_flags)
-
-    fig = plt.figure()
-    plt.hist([int(b) for b in exclusion_flags])
-    st.pyplot(fig)

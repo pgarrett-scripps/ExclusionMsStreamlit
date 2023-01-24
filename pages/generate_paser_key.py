@@ -1,7 +1,7 @@
 import json
 import streamlit as st
 
-from exclusionms.components import DynamicExclusionTolerance
+from utils import get_tolerance
 
 st.header('Make ExclusionMS Key')
 with st.expander('Help'):
@@ -43,17 +43,7 @@ if dynamic_exclusion:
 
     # Only used with Add
     st.subheader('Exclusion Interval Tolerance')
-    use_exact_charge = st.checkbox('Use exact charge', value=False, help='Will require that a ExclusionInterval have the same charge in order to exclude.')
-    mass_tolerance = st.text_input(label='mass Tolerance', value='', help='Represents the mass tolerance (in ppm): mass +/- mass*mass_tolerance/1_000_000')
-    rt_tolerance = st.text_input(label='rt Tolerance', value='', help='Represents the rt tolerance (in seconds): rt +/- rt_tolerance')
-    ook0_tolerance = st.text_input(label='ook0 Tolerance', value='', help='Represents the ook0 tolerance (in %): ook0 +/- ook0*ook0_tolerance')
-    intensity_tolerance = st.text_input(label='Intensity Tolerance', value='', help='Represents the intensity tolerance (in %): intensity +/- intensity*intensity_tolerance')
-
-    tolerance = DynamicExclusionTolerance(charge=use_exact_charge,
-                                          mass=float(mass_tolerance) if mass_tolerance else None,
-                                          rt=float(rt_tolerance) if rt_tolerance else None,
-                                          ook0=float(ook0_tolerance) if ook0_tolerance else None,
-                                          intensity=float(intensity_tolerance) if intensity_tolerance else None)
+    tolerance = get_tolerance()
 
     paser_key['exclusionms']['tolerance'] = tolerance.dict()
 

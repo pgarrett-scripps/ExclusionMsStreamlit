@@ -1,32 +1,25 @@
 import time
+from io import StringIO
 
-from exclusionms.components import ExclusionPoint, DynamicExclusionTolerance
-from matplotlib import pyplot as plt
+from exclusionms.components import ExclusionPoint
 from serenipy.ms2 import from_ms2
 import streamlit as st
 import exclusionms.apihandler
 
 from constants import EXCLUSION_MS_API_IP
+from utils import get_tolerance
 
 ms2_file = st.file_uploader(label='MS2 File', type='.ms2')
 
 # Only used with Add
 st.subheader('Exclusion Interval Tolerance')
-use_exact_charge = st.checkbox('Use exact charge', value=False)
-mass_tolerance = st.text_input(label='mass Tolerance', value='50')
-rt_tolerance = st.text_input(label='rt Tolerance', value='100')
-ook0_tolerance = st.text_input(label='ook0 Tolerance', value='0.05')
-intensity_tolerance = st.text_input(label='Intensity Tolerance', value='0.5')
+tolerance = get_tolerance()
 
 bar = st.progress(0)
 
 if st.button('Run'):
 
-    header_lines, ms2_spectras = from_ms2(ms2_file.read().decode('utf-8'))
-
-    tolerance = DynamicExclusionTolerance.from_strings(exact_charge=use_exact_charge, mass_tolerance=mass_tolerance,
-                                                       rt_tolerance=rt_tolerance, ook0_tolerance=ook0_tolerance,
-                                                       intensity_tolerance=intensity_tolerance)
+    header_lines, ms2_spectras = from_ms2(StringIO(ms2_file.getvalue().decode("utf-8")))
 
     intervals = []
     points = []
@@ -49,9 +42,5 @@ if st.button('Run'):
 
     with st.expander('Results'):
         st.write(exclusion_flags)
-
-    fig = plt.figure()
-    plt.hist([int(b) for b in exclusion_flags])
-    st.pyplot(fig)
 
 
