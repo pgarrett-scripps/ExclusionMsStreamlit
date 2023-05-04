@@ -1,6 +1,5 @@
 import streamlit as st
 from exclusionms import apihandler
-import time
 import plotly.express as px
 
 from constants import EXCLUSION_MS_API_IP
