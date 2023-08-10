@@ -10,7 +10,7 @@ st.title('API History')
 plot_container = st.empty()
 num_entries = st.number_input('Num Entries', 500)
 if st.button('Run'):
-    timings = apihandler.get_log_entries(EXCLUSION_MS_API_IP, num_entries=500)
+    timings = apihandler.get_log_entries(EXCLUSION_MS_API_IP, num_entries=num_entries)
     d = {'timestamp': [], 'time_taken': [], 'url': []}
     for t in timings:
         d['timestamp'].append(t['timestamp'])

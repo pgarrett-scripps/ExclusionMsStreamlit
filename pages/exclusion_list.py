@@ -19,12 +19,9 @@ if col1.button("Clear Intervals"):
 
 if col2.button("Exclusion Stats"):
     stats = exclusionms.apihandler.get_statistics(EXCLUSION_MS_API_IP)
-    tree_length = stats['len']
-    id_length = stats['id_table_len']
+    tree_length = stats['interval_tree']
 
-    c1, c2 = st.columns(2)
-    c1.metric(label='Intervals', value=tree_length)
-    c2.metric(label='Intervals IDs', value=id_length)
+    st.metric(label='Intervals', value=tree_length)
 
     #st.write(response.status_code)
     #st.write(json.loads(response.content)['active_exclusion_list'])
