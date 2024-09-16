@@ -2,7 +2,7 @@ streamlit==1.38.0
 requests==2.32.3
 pandas==1.5.3
 serenipy==0.2.6
-exclusionms==0.2.0
+exclusionms==0.4.0
 plotly==5.14.1
 numpy==1.24.2
 peptacular==1.0.1
